@@ -19,6 +19,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+public:
+	void MoveVertical(float Value);
+	void MoveHorizontal(float Value);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

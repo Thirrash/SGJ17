@@ -24,9 +24,7 @@ class SGJ17_API ASGJ17GameModeBase : public AGameModeBase
 public:
 	ASGJ17GameModeBase();
 	
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TMap<FString, ESButtonState> InputMap;
+
 
 public:
 	UFUNCTION(BlueprintCallable, Category = Game)
