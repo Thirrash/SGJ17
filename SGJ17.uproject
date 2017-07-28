@@ -1,0 +1,13 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "4.16",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "SGJ17",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
