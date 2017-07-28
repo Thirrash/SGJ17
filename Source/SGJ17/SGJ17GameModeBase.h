@@ -6,6 +6,13 @@
 #include "GameFramework/GameModeBase.h"
 #include "SGJ17GameModeBase.generated.h"
 
+UENUM()
+enum class ESButtonState : uint8 {
+	Normal 			UMETA(DisplayName = "Normal"),
+	Blocked 		UMETA(DisplayName = "Blocked"),
+	Killing 		UMETA(DisplayName = "Killing")
+};
+
 /**
  * 
  */
@@ -14,7 +21,15 @@ class SGJ17_API ASGJ17GameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	ASGJ17GameModeBase();
 	
-	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TMap<FString, ESButtonState> InputMap;
+
+public:
+	UFUNCTION(BlueprintCallable, Category = Game)
+		void StartPlay() override;
 	
 };
