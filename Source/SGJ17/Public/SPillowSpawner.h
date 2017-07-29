@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include <vector>
+#include <map>
 #include "SPillowSpawner.generated.h"
 
+class UPaperSpriteComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SGJ17_API USPillowSpawner : public UActorComponent
@@ -24,6 +27,21 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
-	
+private:
+	std::map<int32, bool> SpawnedMap;
+	std::vector<char> Keys;
+	std::map<char, FString> WordMap;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UPaperSpriteComponent* PlayerSpriteComponent = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<class ASPillow> PillowBPClass;
+
+	bool bIsFirstLevel = false;
+	int32 noSpawned;
+
+public:
+	UFUNCTION(BlueprintCallable) void SpawnNewPillow(FTransform Transform);
+	void ResetPillow(int32 nr);
 };

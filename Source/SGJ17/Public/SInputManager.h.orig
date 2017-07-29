@@ -52,12 +52,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float VerticalEnergyChange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float HorizontalEnergyChange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float EnergyRegen;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bIsInputBlocked;
 
+	
+<<<<<<< HEAD
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bIsInputBlocked;
+=======
+	bool bIsInputBlocked;
+	bool CheckIfAllEnergiesEmpty();
+>>>>>>> origin/PigeonHoledBranch
 
 public:
 	UFUNCTION(BlueprintCallable)
 		void ChangeMovement(bool IsFirstTime);
-	bool CheckIfAllEnergiesEmpty();
+	
 };

@@ -12,6 +12,9 @@
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
 #include "ConstructorHelpers.h"
 #include  "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
+#include "Runtime/Engine/Classes/Engine/World.h"
+#include "Runtime/Engine/Public/TimerManager.h"
+#include "SPillowSpawner.h"
 
 ASPlayer::ASPlayer() : HorizontalSpeed(1000.0f), VerticalSpeed(800.0f),
 InputRootChange(FVector::ZeroVector), InputSpriteChange(FVector::ZeroVector) {
@@ -40,6 +43,11 @@ void ASPlayer::BeginPlay() {
 	TArray<AActor*> manageArray;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASInputManager::StaticClass(), manageArray);
 	InputManager = Cast<ASInputManager>(manageArray[0]);
+
+	FTimerHandle timerHandle;
+	FTimerDelegate timerDelegate;
+	timerDelegate.BindUFunction(this, FName("SpawnPillow"));
+	GetWorld()->GetTimerManager().SetTimer(timerHandle, timerDelegate, 5.0f, true, 1.0f);
 }
 
 void ASPlayer::MoveHorizontal(float Value) {
@@ -135,3 +143,18 @@ void ASPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) 
 	PlayerInputComponent->BindAxis("HorizontalMovement", this, &ASPlayer::MoveHorizontal);
 }
 
+void ASPlayer::SpawnPillow() {
+	USPillowSpawner* spawner = FindComponentByClass<USPillowSpawner>();
+	Check(spawner);
+
+	if (spawner->bIsFirstLevel)
+		return;
+
+	FTransform transform;
+	float sign = ((bool)FMath::RandRange(0, 1)) ? 1.0f : -1.0f;
+	transform.SetLocation(FVector(
+		PlayerSpriteComponent->GetComponentLocation().X, 
+		PlayerSpriteComponent->GetComponentLocation().Y + sign * 360.0f,
+		PlayerSpriteComponent->GetComponentLocation().Z));
+	spawner->SpawnNewPillow(transform);
+}

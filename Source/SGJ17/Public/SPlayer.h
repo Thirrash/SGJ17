@@ -22,21 +22,33 @@ class SGJ17_API ASPlayer : public APawn
 public:
 	ASPlayer();
 
+protected:
+	void BeginPlay() override;
+
+public:
 	void MoveVertical(float Value);
 	void MoveHorizontal(float Value);
 
 	void Tick(float DeltaTime) override;
 	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(EditAnywhere)
+private:
+	FVector InputCameraChange;
+	FVector InputSpriteChange;
+	UPROPERTY() ASInputManager* InputManager;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UPaperFlipbookComponent* PlayerFlipbookComponent = nullptr;
-	UPROPERTY(EditAnywhere)
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCameraComponent* PlayerCameraComponent = nullptr;
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* MeshComponent = nullptr;
 
 	float HorizontalSpeed;
 	float VerticalSpeed;
+	UFUNCTION() void SpawnPillow();
 
 private:
 	FVector InputRootChange;
@@ -51,8 +63,4 @@ private:
 	UPaperFlipbook* IdleFlipbook;
 
 	bool bIsFacingRight = true;
-	bool bIsMoving = false;
-
-protected:
-	void BeginPlay() override;
-};
+	bool bIsMoving = false;};
