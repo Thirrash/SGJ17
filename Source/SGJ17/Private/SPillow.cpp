@@ -35,7 +35,7 @@ void ASPillow::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	SetActorLocation(FMath::VInterpTo(GetActorLocation(), Player->PlayerFlipbookComponent->GetComponentLocation(), DeltaTime, MovementSpeed));
-	if (FVector::Distance(GetActorLocation(), Player->PlayerFlipbookComponent->GetComponentLocation()) < 5.0f) {
+	if (FVector::Distance(GetActorLocation(), Player->PlayerFlipbookComponent->GetComponentLocation()) < 30.0f) {
 		//OnPillowHit();
 		//LogA("HitPlayer");
 		InputWidget->Visibility = ESlateVisibility::Collapsed;

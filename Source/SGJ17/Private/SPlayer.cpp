@@ -154,7 +154,7 @@ void ASPlayer::SpawnPillow() {
 	float sign = ((bool)FMath::RandRange(0, 1)) ? 1.0f : -1.0f;
 	transform.SetLocation(FVector(
 		PlayerFlipbookComponent->GetComponentLocation().X,
-		PlayerFlipbookComponent->GetComponentLocation().Y + sign * 360.0f,
+		PlayerFlipbookComponent->GetComponentLocation().Y + sign * 1000.0f,
 		PlayerFlipbookComponent->GetComponentLocation().Z));
 	spawner->SpawnNewPillow(transform);
 }
