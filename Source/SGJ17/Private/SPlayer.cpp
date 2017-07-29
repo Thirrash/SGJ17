@@ -45,7 +45,8 @@ void ASPlayer::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	if (InputManager->bIsInputBlocked) {
-		InputChange = FVector::ZeroVector;
+		InputCameraChange = FVector::ZeroVector;
+		InputSpriteChange = FVector::ZeroVector;
 		return;
 	}
 
@@ -57,23 +58,23 @@ void ASPlayer::Tick(float DeltaTime) {
 		true
 	);
 
-	if (InputChange.Y > SMALL_NUMBER) {
+	if (InputCameraChange.Y > SMALL_NUMBER) {
 		InputManager->CurrentRightEnergy = FMath::Clamp(
-			InputManager->CurrentRightEnergy - InputManager->HorizontalEnergyChange * InputChange.Y,
+			InputManager->CurrentRightEnergy - InputManager->HorizontalEnergyChange * InputCameraChange.Y,
 			0.0f, 1.0f);
 	} else {
 		InputManager->CurrentLeftEnergy = FMath::Clamp(
-			InputManager->CurrentLeftEnergy + InputManager->HorizontalEnergyChange * InputChange.Y,
+			InputManager->CurrentLeftEnergy + InputManager->HorizontalEnergyChange * InputCameraChange.Y,
 			0.0f, 1.0f);
 	}
 
-	if (InputChange.Z > SMALL_NUMBER) {
+	if (InputSpriteChange.Z > SMALL_NUMBER) {
 		InputManager->CurrentUpEnergy = FMath::Clamp(
-			InputManager->CurrentUpEnergy - InputManager->VerticalEnergyChange * InputChange.Z,
+			InputManager->CurrentUpEnergy - InputManager->VerticalEnergyChange * InputSpriteChange.Z,
 			0.0f, 1.0f);
 	} else {
 		InputManager->CurrentDownEnergy = FMath::Clamp(
-			InputManager->CurrentDownEnergy + InputManager->VerticalEnergyChange * InputChange.Z,
+			InputManager->CurrentDownEnergy + InputManager->VerticalEnergyChange * InputSpriteChange.Z,
 			0.0f, 1.0f);
 	}
 
