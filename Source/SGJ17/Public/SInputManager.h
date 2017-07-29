@@ -6,6 +6,17 @@
 #include "GameFramework/Actor.h"
 #include "SInputManager.generated.h"
 
+/*
+USTRUCT()
+struct BoolWrapper {
+public:
+	bool Val;
+
+public:
+	BoolWrapper(bool Value) { Val = Value; }
+};
+*/
+
 UCLASS()
 class SGJ17_API ASInputManager : public AActor
 {
@@ -25,6 +36,7 @@ public:
 
 private:
 	UPROPERTY() TArray<FString> MovementPosssibilities;
+	int32 CurrentMovementIndex;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -32,8 +44,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TArray<FString> UnusedArray;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float CurrentLeftEnergy;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float CurrentRightEnergy;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float CurrentUpEnergy;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float CurrentDownEnergy;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float VerticalEnergyChange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float HorizontalEnergyChange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) float EnergyRegen;
+	
+	bool bIsInputBlocked;
+
 public:
-	UFUNCTION()
-		void ChangeMovement();
+	UFUNCTION(BlueprintCallable)
+		void ChangeMovement(bool IsFirstTime);
 	
 };

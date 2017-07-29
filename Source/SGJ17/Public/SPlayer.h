@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "SPlayer.generated.h"
 
+class ASInputManager;
+
 UCLASS()
 class SGJ17_API ASPlayer : public APawn
 {
@@ -27,6 +29,7 @@ public:
 
 private:
 	FVector InputChange;
+	UPROPERTY() ASInputManager* InputManager;
 
 public:
 	float HorizontalSpeed;
