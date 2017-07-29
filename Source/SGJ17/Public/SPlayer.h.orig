@@ -6,13 +6,13 @@
 #include "GameFramework/Pawn.h"
 #include "SPlayer.generated.h"
 
-<<<<<<< HEAD
 class ASInputManager;
-=======
-
 class UPaperSpriteComponent;
+class UPaperFlipbookComponent;
+class UPaperFlipbook;
 class UCameraComponent;
->>>>>>> origin/PigeonHoledBranch
+class UStaticMeshConponent;
+
 
 UCLASS()
 class SGJ17_API ASPlayer : public APawn
@@ -22,34 +22,58 @@ class SGJ17_API ASPlayer : public APawn
 public:
 	ASPlayer();
 
-protected:
-	void BeginPlay() override;
-
-public:
 	void MoveVertical(float Value);
 	void MoveHorizontal(float Value);
 
-public:	
 	void Tick(float DeltaTime) override;
 	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-private:
 <<<<<<< HEAD
-	FVector InputChange;
-	UPROPERTY() ASInputManager* InputManager;
-=======
+private:
 	FVector InputCameraChange;
 	FVector InputSpriteChange;
+	UPROPERTY() ASInputManager* InputManager;
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UPaperSpriteComponent* PlayerSpriteComponent = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+=======
 	UPROPERTY(EditAnywhere)
-	UCameraComponent* PlayerCameraComponent = nullptr;
+	UPaperFlipbookComponent* PlayerFlipbookComponent = nullptr;
+	UPROPERTY(EditAnywhere)
 >>>>>>> origin/PigeonHoledBranch
+	UCameraComponent* PlayerCameraComponent = nullptr;
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* MeshComponent = nullptr;
 
-public:
 	float HorizontalSpeed;
 	float VerticalSpeed;
+
+<<<<<<< HEAD
+	UFUNCTION() void SpawnPillow();
+=======
+private:
+	FVector InputRootChange;
+	FVector InputSpriteChange;
+	UPROPERTY()
+	ASInputManager* InputManager;
+
+	UPROPERTY()
+	UPaperFlipbook* RunFlipbook;
+
+	UPROPERTY()
+	UPaperFlipbook* IdleFlipbook;
+
+	void CollisionTick(float DeltaTime);
+
+	float CalcOffsetScaleAfterChildSweep();
+
+	bool bIsFacingRight = true;
+	bool bIsMoving = false;
+
+protected:
+	void BeginPlay() override;
+>>>>>>> origin/PigeonHoledBranch
 };

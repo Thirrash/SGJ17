@@ -8,7 +8,11 @@
 
 class ASInputManager;
 class UPaperSpriteComponent;
+class UPaperFlipbookComponent;
+class UPaperFlipbook;
 class UCameraComponent;
+class UStaticMeshConponent;
+
 
 UCLASS()
 class SGJ17_API ASPlayer : public APawn
@@ -25,7 +29,6 @@ public:
 	void MoveVertical(float Value);
 	void MoveHorizontal(float Value);
 
-public:	
 	void Tick(float DeltaTime) override;
 	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -36,14 +39,32 @@ private:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UPaperSpriteComponent* PlayerSpriteComponent = nullptr;
+	UPaperFlipbookComponent* PlayerFlipbookComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCameraComponent* PlayerCameraComponent = nullptr;
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* MeshComponent = nullptr;
 
-public:
 	float HorizontalSpeed;
 	float VerticalSpeed;
-
 	UFUNCTION() void SpawnPillow();
-};
+
+private:
+	FVector InputRootChange;
+	FVector InputSpriteChange;
+	UPROPERTY()
+	ASInputManager* InputManager;
+
+	UPROPERTY()
+	UPaperFlipbook* RunFlipbook;
+
+	UPROPERTY()
+	UPaperFlipbook* IdleFlipbook;
+
+	void CollisionTick(float DeltaTime);
+
+	float CalcOffsetScaleAfterChildSweep();
+
+	bool bIsFacingRight = true;
+	bool bIsMoving = false;};

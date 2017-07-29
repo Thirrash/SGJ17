@@ -6,23 +6,36 @@
 #include "DEBUG/Utils.h"
 #include "Runtime/Engine/Classes/Components/InputComponent.h"
 #include "SInputManager.h"
+#include "PaperFlipbookComponent.h"
+#include "PaperFlipbook.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
+#include "ConstructorHelpers.h"
+#include  "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "SPillowSpawner.h"
 
 ASPlayer::ASPlayer() : HorizontalSpeed(100.0f), VerticalSpeed(80.0f),
-InputCameraChange(FVector::ZeroVector), InputSpriteChange(FVector::ZeroVector) {
+InputRootChange(FVector::ZeroVector), InputSpriteChange(FVector::ZeroVector) {
 	PrimaryActorTick.bCanEverTick = true;
 
-	PlayerCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	RootComponent = PlayerCameraComponent;
-	PlayerSpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Sprite"));
-	PlayerSpriteComponent->SetupAttachment(RootComponent);
+	PlayerCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	PlayerFlipbookComponent = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("FlipbookComponent"));
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 
-	LogD("Start");
+	RootComponent = MeshComponent;
+	PlayerCameraComponent->SetupAttachment(RootComponent);
+	PlayerFlipbookComponent->SetupAttachment(PlayerCameraComponent);
+
+	ConstructorHelpers::FObjectFinder<UPaperFlipbook> RunFlipbookObj(TEXT("/Game/Flipbooks/walk/walk_example_Walk_Flipbook.walk_example_Walk_Flipbook"));
+	ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleFlipbookObj(TEXT("/Game/Flipbooks/idle/character_idle_character_idle.character_idle_character_idle"));
+	RunFlipbook = RunFlipbookObj.Object;
+	IdleFlipbook = IdleFlipbookObj.Object;
+
+	PlayerFlipbookComponent->SetFlipbook(IdleFlipbook);
 }
+
 
 void ASPlayer::BeginPlay() {
 	Super::BeginPlay();
@@ -41,7 +54,7 @@ void ASPlayer::MoveHorizontal(float Value) {
 	if (Value == 0.0f)
 		return;
 
-	InputCameraChange += FVector(0.0f, Value * HorizontalSpeed, 0.0f);
+	InputRootChange += FVector(0.0f, Value * HorizontalSpeed, 0.0f);
 }
 
 void ASPlayer::MoveVertical(float Value) {
@@ -55,44 +68,71 @@ void ASPlayer::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	if (InputManager->bIsInputBlocked) {
-		InputCameraChange = FVector::ZeroVector;
+		InputRootChange = FVector::ZeroVector;
 		InputSpriteChange = FVector::ZeroVector;
 		return;
 	}
 
-	InputCameraChange *= DeltaTime;
+	InputRootChange *= DeltaTime;
 	InputSpriteChange *= DeltaTime;
 
-	SetActorLocation(
-		GetActorLocation() + InputCameraChange,
-		true
-	);
+	FHitResult* hit = new FHitResult();
+	SetActorLocation(GetActorLocation() + InputRootChange + InputSpriteChange, true, hit);
 
-	if (InputCameraChange.Y > SMALL_NUMBER) {
+	PlayerCameraComponent->SetWorldLocation(PlayerCameraComponent->GetComponentLocation() - InputSpriteChange * hit->Time);
+	PlayerFlipbookComponent->SetWorldLocation(PlayerFlipbookComponent->GetComponentLocation() + InputSpriteChange * hit->Time);
+	delete hit;
+
+	bool bIsMovingNow = false;
+	if (InputRootChange.Y > SMALL_NUMBER) {
 		InputManager->CurrentRightEnergy = FMath::Clamp(
-			InputManager->CurrentRightEnergy - InputManager->HorizontalEnergyChange * InputCameraChange.Y,
+			InputManager->CurrentRightEnergy - InputManager->HorizontalEnergyChange * InputRootChange.Y,
 			0.0f, 1.0f);
-	} else {
+		bIsFacingRight = true;
+		bIsMovingNow = true;
+	} else if (InputRootChange.Y < -SMALL_NUMBER) {
 		InputManager->CurrentLeftEnergy = FMath::Clamp(
-			InputManager->CurrentLeftEnergy + InputManager->HorizontalEnergyChange * InputCameraChange.Y,
+			InputManager->CurrentLeftEnergy + InputManager->HorizontalEnergyChange * InputRootChange.Y,
 			0.0f, 1.0f);
+		bIsFacingRight = false;
+		bIsMovingNow = true;
 	}
 
 	if (InputSpriteChange.Z > SMALL_NUMBER) {
 		InputManager->CurrentUpEnergy = FMath::Clamp(
 			InputManager->CurrentUpEnergy - InputManager->VerticalEnergyChange * InputSpriteChange.Z,
 			0.0f, 1.0f);
-	} else {
+		bIsMovingNow = true;
+	} else if (InputSpriteChange.Z < -SMALL_NUMBER) {
 		InputManager->CurrentDownEnergy = FMath::Clamp(
 			InputManager->CurrentDownEnergy + InputManager->VerticalEnergyChange * InputSpriteChange.Z,
 			0.0f, 1.0f);
+		bIsMovingNow = true;
+	}
+	
+	if (bIsMovingNow) {
+		if (!bIsMoving) {
+			PlayerFlipbookComponent->SetFlipbook(RunFlipbook);
+			bIsMoving = true;
+		}
+	}
+	else if (bIsMoving) {
+		PlayerFlipbookComponent->SetFlipbook(IdleFlipbook);
+		bIsMoving = false;
 	}
 
-	PlayerSpriteComponent->SetWorldLocation(
-		PlayerSpriteComponent->GetComponentLocation() + InputSpriteChange
-	);
+	if (bIsFacingRight) {
+		PlayerFlipbookComponent->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
+	}
+	else {
+		PlayerFlipbookComponent->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+	}
 
-	InputCameraChange = FVector::ZeroVector;
+	if (InputManager->CheckIfAllEnergiesEmpty()) {
+		PlayerFlipbookComponent->SetFlipbook(IdleFlipbook);
+	}
+
+	InputRootChange = FVector::ZeroVector;
 	InputSpriteChange = FVector::ZeroVector;
 }
 
