@@ -35,13 +35,15 @@ private:
 	UPROPERTY() ASInputManager* InputManager;
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UPaperSpriteComponent* PlayerSpriteComponent = nullptr;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCameraComponent* PlayerCameraComponent = nullptr;
 
 public:
 	float HorizontalSpeed;
 	float VerticalSpeed;
+
+	UFUNCTION() void SpawnPillow();
 };

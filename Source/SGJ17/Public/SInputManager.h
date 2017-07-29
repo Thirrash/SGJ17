@@ -53,7 +53,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float HorizontalEnergyChange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float EnergyRegen;
 	
-	bool bIsInputBlocked;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bIsInputBlocked;
 
 public:
 	UFUNCTION(BlueprintCallable)
