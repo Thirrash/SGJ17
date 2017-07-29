@@ -13,7 +13,6 @@ class UPaperFlipbook;
 class UCameraComponent;
 class UStaticMeshConponent;
 
-
 UCLASS()
 class SGJ17_API ASPlayer : public APawn
 {
@@ -32,11 +31,6 @@ public:
 	void Tick(float DeltaTime) override;
 	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-private:
-	FVector InputCameraChange;
-	FVector InputSpriteChange;
-	UPROPERTY() ASInputManager* InputManager;
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UPaperFlipbookComponent* PlayerFlipbookComponent = nullptr;
@@ -54,7 +48,7 @@ private:
 	FVector InputRootChange;
 	FVector InputSpriteChange;
 	UPROPERTY()
-	ASInputManager* InputManager;
+	ASInputManager* SInputManager;
 
 	UPROPERTY()
 	UPaperFlipbook* RunFlipbook;

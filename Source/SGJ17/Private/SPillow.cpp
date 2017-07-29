@@ -4,6 +4,7 @@
 #include "DEBUG/Utils.h"
 #include "SPlayer.h"
 #include "PaperSpriteComponent.h"
+#include "PaperFlipbookComponent.h"
 #include "Runtime/Engine/Classes/GameFramework/InputSettings.h"
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
@@ -33,8 +34,8 @@ void ASPillow::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	SetActorLocation(FMath::VInterpTo(GetActorLocation(), Player->PlayerSpriteComponent->GetComponentLocation(), DeltaTime, MovementSpeed));
-	if (FVector::Distance(GetActorLocation(), Player->PlayerSpriteComponent->GetComponentLocation()) < 5.0f) {
+	SetActorLocation(FMath::VInterpTo(GetActorLocation(), Player->PlayerFlipbookComponent->GetComponentLocation(), DeltaTime, MovementSpeed));
+	if (FVector::Distance(GetActorLocation(), Player->PlayerFlipbookComponent->GetComponentLocation()) < 5.0f) {
 		//OnPillowHit();
 		//LogA("HitPlayer");
 		InputWidget->Visibility = ESlateVisibility::Collapsed;

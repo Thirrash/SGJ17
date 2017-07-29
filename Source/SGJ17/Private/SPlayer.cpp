@@ -28,8 +28,8 @@ InputRootChange(FVector::ZeroVector), InputSpriteChange(FVector::ZeroVector) {
 	PlayerCameraComponent->SetupAttachment(RootComponent);
 	PlayerFlipbookComponent->SetupAttachment(PlayerCameraComponent);
 
-	ConstructorHelpers::FObjectFinder<UPaperFlipbook> RunFlipbookObj(TEXT("/Game/Flipbooks/walk/walk_example_Walk_Flipbook.walk_example_Walk_Flipbook"));
-	ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleFlipbookObj(TEXT("/Game/Flipbooks/idle/character_idle_character_idle.character_idle_character_idle"));
+	ConstructorHelpers::FObjectFinder<UPaperFlipbook> RunFlipbookObj(TEXT("PaperFlipbook'/Game/Image/bezp³odny_walk_CharacterWalk.bezp³odny_walk_CharacterWalk'"));
+	ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleFlipbookObj(TEXT("PaperFlipbook'/Game/Image/CharacterIdle.CharacterIdle'"));
 	RunFlipbook = RunFlipbookObj.Object;
 	IdleFlipbook = IdleFlipbookObj.Object;
 
@@ -42,7 +42,7 @@ void ASPlayer::BeginPlay() {
 
 	TArray<AActor*> manageArray;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASInputManager::StaticClass(), manageArray);
-	InputManager = Cast<ASInputManager>(manageArray[0]);
+	SInputManager = Cast<ASInputManager>(manageArray[0]);
 
 	FTimerHandle timerHandle;
 	FTimerDelegate timerDelegate;
@@ -67,7 +67,7 @@ void ASPlayer::MoveVertical(float Value) {
 void ASPlayer::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	if (InputManager->bIsInputBlocked) {
+	if (SInputManager->bIsInputBlocked) {
 		InputRootChange = FVector::ZeroVector;
 		InputSpriteChange = FVector::ZeroVector;
 		return;
@@ -85,27 +85,27 @@ void ASPlayer::Tick(float DeltaTime) {
 
 	bool bIsMovingNow = false;
 	if (InputRootChange.Y > SMALL_NUMBER) {
-		InputManager->CurrentRightEnergy = FMath::Clamp(
-			InputManager->CurrentRightEnergy - InputManager->HorizontalEnergyChange * InputRootChange.Y,
+		SInputManager->CurrentRightEnergy = FMath::Clamp(
+			SInputManager->CurrentRightEnergy - SInputManager->HorizontalEnergyChange * InputRootChange.Y,
 			0.0f, 1.0f);
 		bIsFacingRight = true;
 		bIsMovingNow = true;
 	} else if (InputRootChange.Y < -SMALL_NUMBER) {
-		InputManager->CurrentLeftEnergy = FMath::Clamp(
-			InputManager->CurrentLeftEnergy + InputManager->HorizontalEnergyChange * InputRootChange.Y,
+		SInputManager->CurrentLeftEnergy = FMath::Clamp(
+			SInputManager->CurrentLeftEnergy + SInputManager->HorizontalEnergyChange * InputRootChange.Y,
 			0.0f, 1.0f);
 		bIsFacingRight = false;
 		bIsMovingNow = true;
 	}
 
 	if (InputSpriteChange.Z > SMALL_NUMBER) {
-		InputManager->CurrentUpEnergy = FMath::Clamp(
-			InputManager->CurrentUpEnergy - InputManager->VerticalEnergyChange * InputSpriteChange.Z,
+		SInputManager->CurrentUpEnergy = FMath::Clamp(
+			SInputManager->CurrentUpEnergy - SInputManager->VerticalEnergyChange * InputSpriteChange.Z,
 			0.0f, 1.0f);
 		bIsMovingNow = true;
 	} else if (InputSpriteChange.Z < -SMALL_NUMBER) {
-		InputManager->CurrentDownEnergy = FMath::Clamp(
-			InputManager->CurrentDownEnergy + InputManager->VerticalEnergyChange * InputSpriteChange.Z,
+		SInputManager->CurrentDownEnergy = FMath::Clamp(
+			SInputManager->CurrentDownEnergy + SInputManager->VerticalEnergyChange * InputSpriteChange.Z,
 			0.0f, 1.0f);
 		bIsMovingNow = true;
 	}
@@ -128,7 +128,7 @@ void ASPlayer::Tick(float DeltaTime) {
 		PlayerFlipbookComponent->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 	}
 
-	if (InputManager->CheckIfAllEnergiesEmpty()) {
+	if (SInputManager->CheckIfAllEnergiesEmpty()) {
 		PlayerFlipbookComponent->SetFlipbook(IdleFlipbook);
 	}
 
@@ -153,8 +153,8 @@ void ASPlayer::SpawnPillow() {
 	FTransform transform;
 	float sign = ((bool)FMath::RandRange(0, 1)) ? 1.0f : -1.0f;
 	transform.SetLocation(FVector(
-		PlayerSpriteComponent->GetComponentLocation().X, 
-		PlayerSpriteComponent->GetComponentLocation().Y + sign * 360.0f,
-		PlayerSpriteComponent->GetComponentLocation().Z));
+		PlayerFlipbookComponent->GetComponentLocation().X,
+		PlayerFlipbookComponent->GetComponentLocation().Y + sign * 360.0f,
+		PlayerFlipbookComponent->GetComponentLocation().Z));
 	spawner->SpawnNewPillow(transform);
 }
