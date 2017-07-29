@@ -50,10 +50,6 @@ private:
 	UPROPERTY()
 	UPaperFlipbook* IdleFlipbook;
 
-	void CollisionTick(float DeltaTime);
-
-	float CalcOffsetScaleAfterChildSweep();
-
 	bool bIsFacingRight = true;
 	bool bIsMoving = false;
 
