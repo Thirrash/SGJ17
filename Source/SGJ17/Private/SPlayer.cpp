@@ -16,7 +16,7 @@
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "SPillowSpawner.h"
 
-ASPlayer::ASPlayer() : HorizontalSpeed(100.0f), VerticalSpeed(80.0f),
+ASPlayer::ASPlayer() : HorizontalSpeed(1000.0f), VerticalSpeed(800.0f),
 InputRootChange(FVector::ZeroVector), InputSpriteChange(FVector::ZeroVector) {
 	PrimaryActorTick.bCanEverTick = true;
 
