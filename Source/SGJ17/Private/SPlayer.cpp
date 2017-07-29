@@ -1,34 +1,47 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SPlayer.h"
+#include "DEBUG/Utils.h"
+#include "Runtime/Engine/Classes/Components/InputComponent.h"
 
-
-// Sets default values
-ASPlayer::ASPlayer()
-{
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ASPlayer::ASPlayer() : HorizontalSpeed(1.0f), VerticalSpeed(1.0f),
+InputChange(FVector::ZeroVector) {
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
-// Called when the game starts or when spawned
-void ASPlayer::BeginPlay()
-{
+void ASPlayer::BeginPlay() {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
-void ASPlayer::Tick(float DeltaTime)
-{
+void ASPlayer::MoveHorizontal(float Value) {
+	if (Value == 0.0f)
+		return;
+
+	InputChange += FVector(0.0f, Value * HorizontalSpeed, 0.0f);
+}
+
+void ASPlayer::MoveVertical(float Value) {
+	if (Value == 0.0f)
+		return;
+
+	InputChange += FVector(0.0f, 0.0f, Value * VerticalSpeed);
+}
+
+void ASPlayer::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
+	SetActorLocation(
+		GetActorLocation() + InputChange,
+		true
+	);
+
+	InputChange = FVector::ZeroVector;
 }
 
-// Called to bind functionality to input
-void ASPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
+void ASPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAxis("VerticalMovement", this, &ASPlayer::MoveVertical);
+	PlayerInputComponent->BindAxis("HorizontalMovement", this, &ASPlayer::MoveHorizontal);
 }
 
