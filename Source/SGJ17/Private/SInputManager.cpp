@@ -45,26 +45,22 @@ void ASInputManager::ChangeMovement() {
 	UInputSettings* settings = const_cast<UInputSettings*>(GetDefault<UInputSettings>());
 	TArray<FInputAxisKeyMapping>& axesInputsMapping = settings->AxisMappings;
 
-	bool isFirstVertical = true;
-	bool isFirstHorizontal = true;
 	for (FInputAxisKeyMapping& each : axesInputsMapping) {
 		if (each.AxisName.ToString() == FString("VerticalMovement")) {
-			if (isFirstVertical) {
+			if (each.Scale > 0.0f) {
 				FString keyName = FString(std::string(TCHAR_TO_UTF8(*(MovementPosssibilities[randElement]))).substr(0, 1).c_str());
 				each.Key = FKey(*keyName);
 				InputMap["VerticalMovementPositive"] = keyName;
-				isFirstVertical = false;
 			} else {
 				FString keyName = FString(std::string(TCHAR_TO_UTF8(*(MovementPosssibilities[randElement]))).substr(2, 1).c_str());
 				each.Key = FKey(*keyName);
 				InputMap["VerticalMovementNegative"] = keyName;
 			}
 		} else if (each.AxisName.ToString() == FString("HorizontalMovement")) {
-			if (isFirstHorizontal) {
+			if (each.Scale > 0.0f) {
 				FString keyName = FString(std::string(TCHAR_TO_UTF8(*(MovementPosssibilities[randElement]))).substr(1, 1).c_str());
 				each.Key = FKey(*keyName);
 				InputMap["HorizontalMovementPositive"] = keyName;
-				isFirstHorizontal = false;
 			} else {
 				FString keyName = FString(std::string(TCHAR_TO_UTF8(*(MovementPosssibilities[randElement]))).substr(3, 1).c_str());
 				each.Key = FKey(*keyName);

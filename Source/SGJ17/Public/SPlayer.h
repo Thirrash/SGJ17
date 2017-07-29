@@ -12,24 +12,24 @@ class SGJ17_API ASPlayer : public APawn
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
 	ASPlayer();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	void BeginPlay() override;
 
 public:
 	void MoveVertical(float Value);
 	void MoveHorizontal(float Value);
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	void Tick(float DeltaTime) override;
+	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+private:
+	FVector InputChange;
 
-	
+public:
+	float HorizontalSpeed;
+	float VerticalSpeed;
 	
 };

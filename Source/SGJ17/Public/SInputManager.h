@@ -17,11 +17,11 @@ public:
 
 protected:
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	void BeginPlay() override;
 
 public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	void Tick(float DeltaTime) override;
 
 private:
 	UPROPERTY() TArray<FString> MovementPosssibilities;
@@ -29,6 +29,8 @@ private:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TMap<FString, FString> InputMap;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FString> UnusedArray;
 
 public:
 	UFUNCTION()
