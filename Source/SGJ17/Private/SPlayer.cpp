@@ -32,65 +32,7 @@ InputRootChange(FVector::ZeroVector), InputSpriteChange(FVector::ZeroVector) {
 
 	PlayerFlipbookComponent->SetFlipbook(IdleFlipbook);
 }
-/*
-void ASPlayer::CollisionTick(float DeltaTime)
-{
-	FVector Offset = InputCameraChange + InputSpriteChange;
-	Offset = Offset * DeltaTime;
 
-	//Check collisions on colliders' path
-	float offsetScale = CalcOffsetScaleAfterChildSweep();
-
-	//Change Actor transform based on input and collisions
-	FVector finalLocation = FMath::Lerp(
-		GetActorTransform().GetLocation(),
-		GetActorTransform().GetLocation() + Offset,
-		offsetScale
-	);
-
-	//Sweep set to false because root component does not have any collider
-	SetActorLocation(finalLocation, false);
-}
-
-float ASPlayer::CalcOffsetScaleAfterChildSweep()
-{
-	float offsetScale = 1.0f;
-	FHitResult* hitResult = new FHitResult();
-	for (UPrimitiveComponent* i : CollidingComponents) {
-		Check(i);
-
-		//Store transform to restore object later
-		FTransform currentTransform = i->GetComponentTransform();
-
-		//Some transform magic to get location and rotation of component after applying offset
-		FTransform rootInverseTransform = GetActorTransform().Inverse();
-		FTransform finalTransform = (GetActorTransform() * rootInverseTransform) * CurrentOffset;
-
-		TArray<FHitResult> hits;
-		FCollisionQueryParams queryParams;
-		FCollisionResponseParams responseParams;
-		i->InitSweepCollisionParams(queryParams, responseParams);
-		queryParams.AddIgnoredComponents(CollidingComponents);
-		if (!GetWorld()->SweepMultiByChannel(hits, currentTransform.GetLocation(), currentTransform.GetLocation() + CurrentOffset.GetLocation(), finalTransform.GetRotation(),
-			ECC_Pawn, i->GetCollisionShape(), queryParams, responseParams))
-			continue;
-
-		DrawDebugLine(GetWorld(), currentTransform.GetLocation(), currentTransform.GetLocation() + CurrentOffset.GetLocation(), FColor(255, 0, 0), false, 0.5f);
-
-		if (!hits.Num())
-			continue;
-
-		//Update offsetScale if necessary
-		offsetScale = FMath::Min(offsetScale, hits[hits.Num() - 1].Time - 0.1f);
-		LogC(hits[hits.Num() - 1].Time);
-
-		if (hitResult->Actor != nullptr)
-			LogB(hitResult->Actor->GetName());
-
-		delete hitResult;
-		return offsetScale;
-}
-*/
 
 void ASPlayer::BeginPlay() {
 	Super::BeginPlay();
@@ -132,9 +74,6 @@ void ASPlayer::Tick(float DeltaTime) {
 	PlayerCameraComponent->SetWorldLocation(PlayerCameraComponent->GetComponentLocation() - InputSpriteChange * hit->Time);
 	PlayerFlipbookComponent->SetWorldLocation(PlayerFlipbookComponent->GetComponentLocation() + InputSpriteChange * hit->Time);
 	delete hit;
-
-	//if (BCheck(hit, hit->Actor))
-	//	LogB(hit->Actor->GetFName().ToString());
 
 	bool bIsMovingNow = false;
 	if (InputRootChange.Y > SMALL_NUMBER) {
