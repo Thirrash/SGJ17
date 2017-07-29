@@ -6,6 +6,10 @@
 #include "GameFramework/Pawn.h"
 #include "SPlayer.generated.h"
 
+
+class UPaperSpriteComponent;
+class UCameraComponent;
+
 UCLASS()
 class SGJ17_API ASPlayer : public APawn
 {
@@ -26,10 +30,17 @@ public:
 	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	FVector InputChange;
+	FVector InputCameraChange;
+	FVector InputSpriteChange;
+
+public:
+	UPROPERTY(EditAnywhere)
+	UPaperSpriteComponent* PlayerSpriteComponent = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	UCameraComponent* PlayerCameraComponent = nullptr;
 
 public:
 	float HorizontalSpeed;
 	float VerticalSpeed;
-	
 };
