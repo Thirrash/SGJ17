@@ -8,7 +8,10 @@
 
 class ASInputManager;
 class UPaperSpriteComponent;
+class UPaperFlipbookComponent;
+class UPaperFlipbook;
 class UCameraComponent;
+
 
 UCLASS()
 class SGJ17_API ASPlayer : public APawn
@@ -18,30 +21,35 @@ class SGJ17_API ASPlayer : public APawn
 public:
 	ASPlayer();
 
-protected:
-	void BeginPlay() override;
-
-public:
 	void MoveVertical(float Value);
 	void MoveHorizontal(float Value);
 
-public:	
 	void Tick(float DeltaTime) override;
 	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(EditAnywhere)
+	UPaperFlipbookComponent* PlayerFlipbookComponent = nullptr;
+	UPROPERTY(EditAnywhere)
+	UCameraComponent* PlayerCameraComponent = nullptr;
+
+	float HorizontalSpeed;
+	float VerticalSpeed;
 
 private:
 	FVector InputCameraChange;
 	FVector InputSpriteChange;
-	UPROPERTY() ASInputManager* InputManager;
+	UPROPERTY()
+	ASInputManager* InputManager;
 
-public:
-	UPROPERTY(EditAnywhere)
-	UPaperSpriteComponent* PlayerSpriteComponent = nullptr;
+	UPROPERTY()
+	UPaperFlipbook* RunFlipbook;
 
-	UPROPERTY(EditAnywhere)
-	UCameraComponent* PlayerCameraComponent = nullptr;
+	UPROPERTY()
+	UPaperFlipbook* IdleFlipbook;
 
-public:
-	float HorizontalSpeed;
-	float VerticalSpeed;
+	bool bIsFacingRight = true;
+	bool bIsMoving = false;
+
+protected:
+	void BeginPlay() override;
 };

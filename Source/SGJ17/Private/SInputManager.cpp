@@ -43,7 +43,7 @@ void ASInputManager::BeginPlay() {
 void ASInputManager::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	if (CurrentDownEnergy == 0.0f || CurrentLeftEnergy == 0.0f || CurrentRightEnergy == 0.0f || CurrentUpEnergy == 0.0f) {
+	if (CheckIfAllEnergiesEmpty()) {
 		bIsInputBlocked = true;
 		FTimerHandle timerHandle;
 		FTimerDelegate timerDelegate;
@@ -55,6 +55,11 @@ void ASInputManager::Tick(float DeltaTime) {
 	CurrentDownEnergy = FMath::Clamp(CurrentDownEnergy + EnergyRegen * DeltaTime, 0.0f, 1.0f);
 	CurrentRightEnergy = FMath::Clamp(CurrentRightEnergy + EnergyRegen * DeltaTime, 0.0f, 1.0f);
 	CurrentUpEnergy = FMath::Clamp(CurrentUpEnergy + EnergyRegen * DeltaTime, 0.0f, 1.0f);
+}
+
+bool ASInputManager::CheckIfAllEnergiesEmpty()
+{
+	return CurrentDownEnergy == 0.0f || CurrentLeftEnergy == 0.0f || CurrentRightEnergy == 0.0f || CurrentUpEnergy == 0.0f;
 }
 
 void ASInputManager::ChangeMovement(bool IsFirstTime) {

@@ -52,8 +52,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float VerticalEnergyChange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float HorizontalEnergyChange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) float EnergyRegen;
+
 	
 	bool bIsInputBlocked;
+	bool CheckIfAllEnergiesEmpty();
 
 public:
 	UFUNCTION(BlueprintCallable)
