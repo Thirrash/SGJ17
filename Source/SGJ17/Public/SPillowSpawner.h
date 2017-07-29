@@ -30,6 +30,7 @@ public:
 private:
 	std::map<int32, bool> SpawnedMap;
 	std::vector<char> Keys;
+	std::map<char, FString> WordMap;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -42,5 +43,5 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable) void SpawnNewPillow(FTransform Transform);
-	
+	void ResetPillow(int32 nr);
 };

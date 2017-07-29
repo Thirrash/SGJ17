@@ -7,7 +7,8 @@
 #include "ConstructorHelpers.h"
 #include "DEBUG/Utils.h"
 
-USPillowSpawner::USPillowSpawner() : SpawnedMap(std::map<int32, bool>()), Keys(std::vector<char>()) {
+USPillowSpawner::USPillowSpawner() : SpawnedMap(std::map<int32, bool>()), Keys(std::vector<char>()),
+WordMap(std::map<char, FString>()) {
 	PrimaryComponentTick.bCanEverTick = true;
 
 	SpawnedMap.insert(std::pair<int32, bool>(1, false));
@@ -37,14 +38,15 @@ void USPillowSpawner::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 }
 
 void USPillowSpawner::SpawnNewPillow(FTransform Transform) {
+	std::vector<int32> pillowNrs;
 	int32 pillowNr;
 	for (std::pair<int32, bool> each : SpawnedMap) {
 		if (each.second == false) {
-			pillowNr = each.first;
-			break;
+			pillowNrs.push_back(each.first);
 		}
 	}
 
+	pillowNr = pillowNrs[FMath::RandRange(0, pillowNrs.size() - 1)];
 	SpawnedMap[pillowNr] = true;
 	
 	FActorSpawnParameters spawnParams;
@@ -56,8 +58,12 @@ void USPillowSpawner::SpawnNewPillow(FTransform Transform) {
 
 	newPillow->SetActorTransform(Transform);
 	newPillow->InitPlayer(Cast<ASPlayer>(GetOwner()));
-	newPillow->InitName(pillowNr, Keys[pillowNr - 1]);
+	newPillow->InitName(pillowNr, Keys[pillowNr - 1], this);
 
 	noSpawned++;
+}
+
+void USPillowSpawner::ResetPillow(int32 nr) {
+	SpawnedMap[nr] = false;
 }
 

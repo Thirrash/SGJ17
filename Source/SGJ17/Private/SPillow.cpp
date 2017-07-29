@@ -10,6 +10,9 @@
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "Runtime/CoreUObject/Public/UObject/UObjectIterator.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
+#include "Runtime/UMG/Public/Components/SlateWrapperTypes.h"
+#include "SPillowSpawner.h"
 
 // Sets default values
 ASPillow::ASPillow()
@@ -34,6 +37,10 @@ void ASPillow::Tick(float DeltaTime)
 	if (FVector::Distance(GetActorLocation(), Player->PlayerSpriteComponent->GetComponentLocation()) < 5.0f) {
 		//OnPillowHit();
 		//LogA("HitPlayer");
+		InputWidget->Visibility = ESlateVisibility::Collapsed;
+		InputWidget->ConditionalBeginDestroy();
+		if (PillowSpawner)
+			PillowSpawner->ResetPillow(PillowNumber);
 		Destroy();
 	}
 }
@@ -43,11 +50,13 @@ void ASPillow::InitPlayer(ASPlayer * CurrentPlayer) {
 		Player = CurrentPlayer;
 }
 
-void ASPillow::InitName(int PillowNr, char KeyRequired) {
-
+void ASPillow::InitName(int PillowNr, char KeyRequired, USPillowSpawner* Spawner) {
+	PillowNumber = PillowNr;
+	PillowSpawner = Spawner;
 	std::string name = "Pillow";
 	name += std::to_string(PillowNr);
 	Key = KeyRequired;
+	KeyString = FString(std::string(1, KeyRequired).c_str());
 	
 	UInputSettings* settings = const_cast<UInputSettings*>(GetDefault<UInputSettings>());
 	Check(settings);
@@ -87,5 +96,9 @@ void ASPillow::OnPillowHit() {
 		It->ForceRebuildingKeyMaps(true);
 
 	LogC("Hit");
+	InputWidget->Visibility = ESlateVisibility::Collapsed;
+	InputWidget->ConditionalBeginDestroy();
+	if (PillowSpawner)
+		PillowSpawner->ResetPillow(PillowNumber);
 	Destroy();
 }
