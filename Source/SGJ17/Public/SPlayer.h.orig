@@ -6,9 +6,13 @@
 #include "GameFramework/Pawn.h"
 #include "SPlayer.generated.h"
 
+<<<<<<< HEAD
 class ASInputManager;
+=======
+
 class UPaperSpriteComponent;
 class UCameraComponent;
+>>>>>>> origin/PigeonHoledBranch
 
 UCLASS()
 class SGJ17_API ASPlayer : public APawn
@@ -30,9 +34,12 @@ public:
 	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+<<<<<<< HEAD
+	FVector InputChange;
+	UPROPERTY() ASInputManager* InputManager;
+=======
 	FVector InputCameraChange;
 	FVector InputSpriteChange;
-	UPROPERTY() ASInputManager* InputManager;
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -40,6 +47,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* PlayerCameraComponent = nullptr;
+>>>>>>> origin/PigeonHoledBranch
 
 public:
 	float HorizontalSpeed;
