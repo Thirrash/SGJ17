@@ -11,23 +11,86 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
 #include "ConstructorHelpers.h"
+#include  "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
 
 ASPlayer::ASPlayer() : HorizontalSpeed(100.0f), VerticalSpeed(80.0f),
-InputCameraChange(FVector::ZeroVector), InputSpriteChange(FVector::ZeroVector) {
+InputRootChange(FVector::ZeroVector), InputSpriteChange(FVector::ZeroVector) {
 	PrimaryActorTick.bCanEverTick = true;
 
 	PlayerCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
-	RootComponent = PlayerCameraComponent;
 	PlayerFlipbookComponent = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("FlipbookComponent"));
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+
+	RootComponent = MeshComponent;
+	PlayerCameraComponent->SetupAttachment(RootComponent);
+	PlayerFlipbookComponent->SetupAttachment(PlayerCameraComponent);
 
 	ConstructorHelpers::FObjectFinder<UPaperFlipbook> RunFlipbookObj(TEXT("/Game/Flipbooks/walk/walk_example_Walk_Flipbook.walk_example_Walk_Flipbook"));
-	ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleFlipbookObj(TEXT("/Game/Flipbooks/idle/idle_Flipbook.idle_Flipbook"));
+	ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleFlipbookObj(TEXT("/Game/Flipbooks/idle/character_idle_character_idle.character_idle_character_idle"));
 	RunFlipbook = RunFlipbookObj.Object;
 	IdleFlipbook = IdleFlipbookObj.Object;
 
 	PlayerFlipbookComponent->SetFlipbook(IdleFlipbook);
-	PlayerFlipbookComponent->SetupAttachment(RootComponent);
 }
+/*
+void ASPlayer::CollisionTick(float DeltaTime)
+{
+	FVector Offset = InputCameraChange + InputSpriteChange;
+	Offset = Offset * DeltaTime;
+
+	//Check collisions on colliders' path
+	float offsetScale = CalcOffsetScaleAfterChildSweep();
+
+	//Change Actor transform based on input and collisions
+	FVector finalLocation = FMath::Lerp(
+		GetActorTransform().GetLocation(),
+		GetActorTransform().GetLocation() + Offset,
+		offsetScale
+	);
+
+	//Sweep set to false because root component does not have any collider
+	SetActorLocation(finalLocation, false);
+}
+
+float ASPlayer::CalcOffsetScaleAfterChildSweep()
+{
+	float offsetScale = 1.0f;
+	FHitResult* hitResult = new FHitResult();
+	for (UPrimitiveComponent* i : CollidingComponents) {
+		Check(i);
+
+		//Store transform to restore object later
+		FTransform currentTransform = i->GetComponentTransform();
+
+		//Some transform magic to get location and rotation of component after applying offset
+		FTransform rootInverseTransform = GetActorTransform().Inverse();
+		FTransform finalTransform = (GetActorTransform() * rootInverseTransform) * CurrentOffset;
+
+		TArray<FHitResult> hits;
+		FCollisionQueryParams queryParams;
+		FCollisionResponseParams responseParams;
+		i->InitSweepCollisionParams(queryParams, responseParams);
+		queryParams.AddIgnoredComponents(CollidingComponents);
+		if (!GetWorld()->SweepMultiByChannel(hits, currentTransform.GetLocation(), currentTransform.GetLocation() + CurrentOffset.GetLocation(), finalTransform.GetRotation(),
+			ECC_Pawn, i->GetCollisionShape(), queryParams, responseParams))
+			continue;
+
+		DrawDebugLine(GetWorld(), currentTransform.GetLocation(), currentTransform.GetLocation() + CurrentOffset.GetLocation(), FColor(255, 0, 0), false, 0.5f);
+
+		if (!hits.Num())
+			continue;
+
+		//Update offsetScale if necessary
+		offsetScale = FMath::Min(offsetScale, hits[hits.Num() - 1].Time - 0.1f);
+		LogC(hits[hits.Num() - 1].Time);
+
+		if (hitResult->Actor != nullptr)
+			LogB(hitResult->Actor->GetName());
+
+		delete hitResult;
+		return offsetScale;
+}
+*/
 
 void ASPlayer::BeginPlay() {
 	Super::BeginPlay();
@@ -41,7 +104,7 @@ void ASPlayer::MoveHorizontal(float Value) {
 	if (Value == 0.0f)
 		return;
 
-	InputCameraChange += FVector(0.0f, Value * HorizontalSpeed, 0.0f);
+	InputRootChange += FVector(0.0f, Value * HorizontalSpeed, 0.0f);
 }
 
 void ASPlayer::MoveVertical(float Value) {
@@ -55,29 +118,34 @@ void ASPlayer::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	if (InputManager->bIsInputBlocked) {
-		InputCameraChange = FVector::ZeroVector;
+		InputRootChange = FVector::ZeroVector;
 		InputSpriteChange = FVector::ZeroVector;
 		return;
 	}
 
-	InputCameraChange *= DeltaTime;
+	InputRootChange *= DeltaTime;
 	InputSpriteChange *= DeltaTime;
 
-	SetActorLocation(
-		GetActorLocation() + InputCameraChange,
-		true
-	);
+	FHitResult* hit = new FHitResult();
+	SetActorLocation(GetActorLocation() + InputRootChange + InputSpriteChange, true, hit);
+
+	PlayerCameraComponent->SetWorldLocation(PlayerCameraComponent->GetComponentLocation() - InputSpriteChange * hit->Time);
+	PlayerFlipbookComponent->SetWorldLocation(PlayerFlipbookComponent->GetComponentLocation() + InputSpriteChange * hit->Time);
+	delete hit;
+
+	//if (BCheck(hit, hit->Actor))
+	//	LogB(hit->Actor->GetFName().ToString());
 
 	bool bIsMovingNow = false;
-	if (InputCameraChange.Y > SMALL_NUMBER) {
+	if (InputRootChange.Y > SMALL_NUMBER) {
 		InputManager->CurrentRightEnergy = FMath::Clamp(
-			InputManager->CurrentRightEnergy - InputManager->HorizontalEnergyChange * InputCameraChange.Y,
+			InputManager->CurrentRightEnergy - InputManager->HorizontalEnergyChange * InputRootChange.Y,
 			0.0f, 1.0f);
 		bIsFacingRight = true;
 		bIsMovingNow = true;
-	} else if (InputCameraChange.Y < -SMALL_NUMBER) {
+	} else if (InputRootChange.Y < -SMALL_NUMBER) {
 		InputManager->CurrentLeftEnergy = FMath::Clamp(
-			InputManager->CurrentLeftEnergy + InputManager->HorizontalEnergyChange * InputCameraChange.Y,
+			InputManager->CurrentLeftEnergy + InputManager->HorizontalEnergyChange * InputRootChange.Y,
 			0.0f, 1.0f);
 		bIsFacingRight = false;
 		bIsMovingNow = true;
@@ -117,11 +185,7 @@ void ASPlayer::Tick(float DeltaTime) {
 		PlayerFlipbookComponent->SetFlipbook(IdleFlipbook);
 	}
 
-	PlayerFlipbookComponent->SetWorldLocation(
-		PlayerFlipbookComponent->GetComponentLocation() + InputSpriteChange
-	);
-
-	InputCameraChange = FVector::ZeroVector;
+	InputRootChange = FVector::ZeroVector;
 	InputSpriteChange = FVector::ZeroVector;
 }
 

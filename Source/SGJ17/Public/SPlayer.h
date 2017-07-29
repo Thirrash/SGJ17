@@ -11,6 +11,7 @@ class UPaperSpriteComponent;
 class UPaperFlipbookComponent;
 class UPaperFlipbook;
 class UCameraComponent;
+class UStaticMeshConponent;
 
 
 UCLASS()
@@ -31,12 +32,14 @@ public:
 	UPaperFlipbookComponent* PlayerFlipbookComponent = nullptr;
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* PlayerCameraComponent = nullptr;
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* MeshComponent = nullptr;
 
 	float HorizontalSpeed;
 	float VerticalSpeed;
 
 private:
-	FVector InputCameraChange;
+	FVector InputRootChange;
 	FVector InputSpriteChange;
 	UPROPERTY()
 	ASInputManager* InputManager;
@@ -46,6 +49,10 @@ private:
 
 	UPROPERTY()
 	UPaperFlipbook* IdleFlipbook;
+
+	void CollisionTick(float DeltaTime);
+
+	float CalcOffsetScaleAfterChildSweep();
 
 	bool bIsFacingRight = true;
 	bool bIsMoving = false;
