@@ -21,8 +21,14 @@ WordMap(std::map<char, FString>()) {
 	SpawnedMap.insert(std::pair<int32, bool>(6, false));
 	SpawnedMap.insert(std::pair<int32, bool>(7, false));
 	SpawnedMap.insert(std::pair<int32, bool>(8, false));
+	SpawnedMap.insert(std::pair<int32, bool>(9, false));
+	SpawnedMap.insert(std::pair<int32, bool>(10, false));
+	SpawnedMap.insert(std::pair<int32, bool>(11, false));
+	SpawnedMap.insert(std::pair<int32, bool>(12, false));
+	SpawnedMap.insert(std::pair<int32, bool>(13, false));
+	SpawnedMap.insert(std::pair<int32, bool>(14, false));
 
-	Keys = { 'I', 'O', 'P', 'K', 'L', 'C', 'B', 'N' };
+	Keys = { 'I', 'O', 'P', 'K', 'L', 'C', 'B', 'N', 'J', 'Z', 'X', 'Y', 'T', 'Q'};
 	noSpawned = 0;
 
 	static ConstructorHelpers::FObjectFinder<UBlueprint> ItemBlueprint(TEXT("Blueprint'/Game/MySPillow_BP.MySPillow_BP'"));

@@ -25,6 +25,7 @@ MovementPosssibilities(TArray<FString>()), InputMap(TMap<FString, FString>()) {
 	CurrentUpEnergy = 1.0f;
 
 	EnergyRegen = 0.15f;
+
 	VerticalEnergyChange = 0.002f;
 	HorizontalEnergyChange = 0.0002f;
 

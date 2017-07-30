@@ -41,6 +41,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* MeshComponent = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SpawnDeltaTime = 2;
+
 	float HorizontalSpeed;
 	float VerticalSpeed;
 	UFUNCTION(BlueprintCallable) void SpawnPillow(bool IsForce = false);
