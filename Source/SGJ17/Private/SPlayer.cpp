@@ -144,11 +144,11 @@ void ASPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) 
 	PlayerInputComponent->BindAxis("HorizontalMovement", this, &ASPlayer::MoveHorizontal);
 }
 
-void ASPlayer::SpawnPillow() {
+void ASPlayer::SpawnPillow(bool IsForced) {
 	USPillowSpawner* spawner = FindComponentByClass<USPillowSpawner>();
 	Check(spawner);
 
-	if (spawner->bIsFirstLevel)
+	if (spawner->bIsFirstLevel && !IsForced)
 		return;
 
 	FTransform transform;

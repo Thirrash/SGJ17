@@ -11,6 +11,8 @@ USPillowSpawner::USPillowSpawner() : SpawnedMap(std::map<int32, bool>()), Keys(s
 WordMap(std::map<char, FString>()) {
 	PrimaryComponentTick.bCanEverTick = true;
 
+	bIsFirstLevel = true;
+
 	SpawnedMap.insert(std::pair<int32, bool>(1, false));
 	SpawnedMap.insert(std::pair<int32, bool>(2, false));
 	SpawnedMap.insert(std::pair<int32, bool>(3, false));

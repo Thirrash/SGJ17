@@ -43,7 +43,7 @@ public:
 
 	float HorizontalSpeed;
 	float VerticalSpeed;
-	UFUNCTION() void SpawnPillow();
+	UFUNCTION(BlueprintCallable) void SpawnPillow(bool IsForce = false);
 
 	UFUNCTION(BlueprintCallable) void ShowAd();
 
