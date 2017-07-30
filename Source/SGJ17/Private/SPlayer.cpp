@@ -11,10 +11,11 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
 #include "ConstructorHelpers.h"
-#include  "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
+#include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "SPillowSpawner.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 
 ASPlayer::ASPlayer() : HorizontalSpeed(1300.0f), VerticalSpeed(1000.0f),
 InputRootChange(FVector::ZeroVector), InputSpriteChange(FVector::ZeroVector) {
@@ -122,10 +123,10 @@ void ASPlayer::Tick(float DeltaTime) {
 	}
 
 	if (bIsFacingRight) {
-		PlayerFlipbookComponent->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
+		PlayerFlipbookComponent->SetRelativeRotation(FRotator(0.f, 90.0f, 0.f));
 	}
 	else {
-		PlayerFlipbookComponent->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+		PlayerFlipbookComponent->SetRelativeRotation(FRotator(0.f, -90.0f, 0.f));
 	}
 
 	if (SInputManager->CheckIfAllEnergiesEmpty()) {
@@ -154,7 +155,13 @@ void ASPlayer::SpawnPillow() {
 	float sign = ((bool)FMath::RandRange(0, 1)) ? 1.0f : -1.0f;
 	transform.SetLocation(FVector(
 		PlayerFlipbookComponent->GetComponentLocation().X,
-		PlayerFlipbookComponent->GetComponentLocation().Y + sign * 360.0f,
+		PlayerFlipbookComponent->GetComponentLocation().Y + sign * 3000.0f,
 		PlayerFlipbookComponent->GetComponentLocation().Z));
 	spawner->SpawnNewPillow(transform);
+}
+
+void ASPlayer::ShowAd() {
+	UUserWidget* widget = CreateWidget<UUserWidget>(Cast<APlayerController>(GetController()), WidgetBP);
+	widget->AddToViewport(4);
+	LogA("KEK");
 }
