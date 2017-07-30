@@ -42,7 +42,7 @@ public:
 	UStaticMeshComponent* MeshComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SpawnDeltaTime = 2;
+	float SpawnDeltaTime = 0.85;
 
 	float HorizontalSpeed;
 	float VerticalSpeed;
