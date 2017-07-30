@@ -12,6 +12,7 @@ class UPaperFlipbookComponent;
 class UPaperFlipbook;
 class UCameraComponent;
 class UStaticMeshConponent;
+class UUserWidget;
 
 UCLASS()
 class SGJ17_API ASPlayer : public APawn
@@ -43,6 +44,10 @@ public:
 	float HorizontalSpeed;
 	float VerticalSpeed;
 	UFUNCTION() void SpawnPillow();
+
+	UFUNCTION(BlueprintCallable) void ShowAd();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) TSubclassOf<UUserWidget> WidgetBP;
 
 private:
 	FVector InputRootChange;

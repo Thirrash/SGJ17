@@ -38,6 +38,8 @@ void ASPillow::Tick(float DeltaTime)
 	if (FVector::Distance(GetActorLocation(), Player->PlayerFlipbookComponent->GetComponentLocation()) < 30.0f) {
 		//OnPillowHit();
 		//LogA("HitPlayer");
+		Cast<ASPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn())->ShowAd();
+
 		InputWidget->Visibility = ESlateVisibility::Collapsed;
 		InputWidget->ConditionalBeginDestroy();
 		if (PillowSpawner)
@@ -63,13 +65,10 @@ void ASPillow::InitName(int PillowNr, char KeyRequired, USPillowSpawner* Spawner
 	Check(settings);
 	FString keyName = FString(std::string(1, KeyRequired).c_str());
 	BindingName = FString(name.c_str());
-	LogD(BindingName);
 
 	TArray<FInputActionKeyMapping>& inputs = settings->ActionMappings;
 	for (FInputActionKeyMapping& each : inputs) {
-		LogA(each.ActionName.ToString());
 		if (each.ActionName.ToString() == BindingName) {
-			LogC("GUD");
 			each.Key = FKey(*keyName);
 		}
 	}
