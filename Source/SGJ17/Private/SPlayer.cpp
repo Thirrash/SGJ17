@@ -16,7 +16,7 @@
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "SPillowSpawner.h"
 
-ASPlayer::ASPlayer() : HorizontalSpeed(1000.0f), VerticalSpeed(800.0f),
+ASPlayer::ASPlayer() : HorizontalSpeed(1300.0f), VerticalSpeed(1000.0f),
 InputRootChange(FVector::ZeroVector), InputSpriteChange(FVector::ZeroVector) {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -47,7 +47,7 @@ void ASPlayer::BeginPlay() {
 	FTimerHandle timerHandle;
 	FTimerDelegate timerDelegate;
 	timerDelegate.BindUFunction(this, FName("SpawnPillow"));
-	GetWorld()->GetTimerManager().SetTimer(timerHandle, timerDelegate, 5.0f, true, 1.0f);
+	GetWorld()->GetTimerManager().SetTimer(timerHandle, timerDelegate, SpawnDeltaTime, true, 1.0f);
 }
 
 void ASPlayer::MoveHorizontal(float Value) {
