@@ -41,6 +41,7 @@ InputRootChange(FVector::ZeroVector), InputSpriteChange(FVector::ZeroVector) {
 void ASPlayer::BeginPlay() {
 	Super::BeginPlay();
 
+	SpawnDeltaTime = 0.95f;
 	TArray<AActor*> manageArray;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASInputManager::StaticClass(), manageArray);
 	SInputManager = Cast<ASInputManager>(manageArray[0]);
