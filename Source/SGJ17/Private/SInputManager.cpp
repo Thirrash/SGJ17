@@ -25,13 +25,9 @@ MovementPosssibilities(TArray<FString>()), InputMap(TMap<FString, FString>()) {
 	CurrentUpEnergy = 1.0f;
 
 	EnergyRegen = 0.15f;
-<<<<<<< HEAD
-	VerticalEnergyChange = 0.0004f;
-	HorizontalEnergyChange = 0.0004f;
-=======
+
 	VerticalEnergyChange = 0.002f;
 	HorizontalEnergyChange = 0.0002f;
->>>>>>> origin/ThirrBranch
 
 	InputMap.Add("VerticalMovementPositive", "W");
 	InputMap.Add("VerticalMovementNegative", "S");
